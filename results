@@ -1,0 +1,5 @@
+conceptnet5 (10K): 39.9
+conceptnet5 (10K, cached): 5.2
+lightning-conceptnet (10K): 22.9
+lightning-conceptnet (10K, cached): 7.4
+lightning-conceptnet (10K, cached, duct tape): 4.5 s
