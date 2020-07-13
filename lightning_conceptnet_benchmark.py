@@ -10,23 +10,26 @@ import typer
 from lightning_conceptnet import LightningConceptNet
 
 
-def query(database_path_hint: Path, concepts: List[Dict]):
-    lcn = LightningConceptNet(database_path_hint)
+def query(lcn: LightningConceptNet, concepts: List[Dict]):
     with lcn.read_transaction as txn:
         for concept in concepts:
             _ = list(lcn.concept(txn=txn).has(**concept).edge_all())
 
 
-def main(database_path_hint: Path, csv_dir: Path):
-    csv_file_path = csv_dir.expanduser() / "random_concepts.csv"
+def main(database_path_hint: Path, csv_path: Path):
+    csv_file_path = csv_path.expanduser()
     with open(str(csv_file_path), newline="") as f:
         reader = csv.DictReader(f)
         concepts = []
         for row in reader:
             concept = row
-            concept["sense"] = literal_eval(concept["sense"])
+            if "label" in concept and not concept["label"]:
+                del concept["label"]
+            if "sense" in concept and not literal_eval(concept["sense"]):
+                del concept["sense"]
             concepts.append(concept)
-    print(timeit("query(database_path_hint, concepts)", number=1, globals={**globals(), **locals()}))
+    lcn = LightningConceptNet(database_path_hint)
+    print(timeit("query(lcn, concepts)", number=1, globals={**globals(), **locals()}))
 
 
 if __name__ == "__main__":

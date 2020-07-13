@@ -11,22 +11,27 @@ from conceptnet5.db.query import AssertionFinder
 from conceptnet5.nodes import standardized_concept_uri
 
 
-def query(concepts: List[str]):
-    af = AssertionFinder()
+def query(af: AssertionFinder, concepts: List[str]):
     for concept in concepts:
         _ = af.lookup(concept, limit=None)
 
 
-def main(database_path_hint: Path, csv_dir: Path):
-    csv_file_path = csv_dir.expanduser() / "random_concepts.csv"
+def main(csv_path: Path):
+    csv_file_path = csv_path.expanduser()
     with open(str(csv_file_path), newline="") as f:
         reader = csv.DictReader(f)
         concepts = []
         for row in reader:
             concept = row
-            concept["sense"] = literal_eval(concept["sense"])
-            concepts.append(standardized_concept_uri(concept["language"], concept["label"], *concept["sense"]))
-    print(timeit("query(concepts)", number=1, globals={**globals(), **locals()}))
+            language = concept["language"]
+            text = concept.get("label")
+            if text:
+                sense = literal_eval(concept.get("sense")) or []
+                concepts.append(standardized_concept_uri(language, text, *sense))
+            else:
+                concepts.append(f"/c/{language}")
+    af = AssertionFinder()
+    print(timeit("query(af, concepts)", number=1, globals={**globals(), **locals()}))
 
 
 if __name__ == "__main__":
