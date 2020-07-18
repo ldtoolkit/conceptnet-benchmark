@@ -11,9 +11,36 @@ from conceptnet5.db.query import AssertionFinder
 from conceptnet5.nodes import standardized_concept_uri
 
 
-def query(af: AssertionFinder, concepts: List[str]):
+def query(af: AssertionFinder, concepts: List[str], query_external_urls: bool, verbose: bool = False):
+    assertion_count = 0
+    external_url_count = 0
+    assertions_strs = []
+    external_urls_strs = []
+
     for concept in concepts:
-        _ = af.lookup(concept, limit=None)
+        edges = af.lookup(concept, limit=None)
+        assertions = [edge for edge in edges if edge["rel"]["label"] != "ExternalURL"]
+        if query_external_urls:
+            external_urls = [edge["end"]["term"] for edge in edges if edge["rel"]["label"] == "ExternalURL"]
+            if verbose:
+                external_urls_strs.extend(external_urls)
+                external_url_count += len(external_urls)
+        if verbose:
+            assertions_strs.extend(
+                f"{assertion['rel']['label']}: {assertion['start']['@id']} - {assertion['end']['@id']}"
+                for assertion in assertions
+            )
+            assertion_count += len(assertions)
+
+    if verbose:
+        print("Assertions:")
+        for assertion_str in sorted(assertions_strs):
+            print(assertion_str)
+        print(f"Assertion count: {assertion_count}")
+        print(f"External URLs:")
+        for external_url_str in sorted(external_urls_strs):
+            print(external_url_str)
+        print(f"External URL count: {external_url_count}")
 
 
 def read_concepts_from_csv(path: Path) -> List[str]:
@@ -32,15 +59,30 @@ def read_concepts_from_csv(path: Path) -> List[str]:
     return concepts
 
 
-def profile(csv_path: Path):
+def profile(csv_path: Path, query_external_urls: bool, verbose: bool):
     af = AssertionFinder()
     concepts = read_concepts_from_csv(csv_path.expanduser())
-    vars_to_pass = {"query": query, "af": af, "concepts": concepts}
-    return timeit("query(af, concepts)", number=1, globals=vars_to_pass)
+    vars_to_pass = {
+        "query": query,
+        "af": af,
+        "concepts": concepts,
+        "query_external_urls": query_external_urls,
+        "verbose": verbose,
+    }
+    return timeit(
+        """query(
+            af=af,
+            concepts=concepts,
+            query_external_urls=query_external_urls,
+            verbose=verbose,
+        )""",
+        number=1,
+        globals=vars_to_pass,
+    )
 
 
-def main(csv_path: Path):
-    print(profile(csv_path=csv_path))
+def main(csv_path: Path, query_external_urls: bool = False, verbose: bool = False):
+    print(profile(csv_path=csv_path, query_external_urls=query_external_urls, verbose=verbose))
 
 
 if __name__ == "__main__":
