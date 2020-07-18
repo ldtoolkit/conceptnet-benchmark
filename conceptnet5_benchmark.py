@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 from ast import literal_eval
 from pathlib import Path
-import csv
 from timeit import timeit
 from typing import List
+import csv
 
 import typer
 
@@ -16,9 +16,8 @@ def query(af: AssertionFinder, concepts: List[str]):
         _ = af.lookup(concept, limit=None)
 
 
-def main(csv_path: Path):
-    csv_file_path = csv_path.expanduser()
-    with open(str(csv_file_path), newline="") as f:
+def read_concepts_from_csv(path: Path) -> List[str]:
+    with open(str(path), newline="") as f:
         reader = csv.DictReader(f)
         concepts = []
         for row in reader:
@@ -30,8 +29,18 @@ def main(csv_path: Path):
                 concepts.append(standardized_concept_uri(language, text, *sense))
             else:
                 concepts.append(f"/c/{language}")
+    return concepts
+
+
+def profile(csv_path: Path):
     af = AssertionFinder()
-    print(timeit("query(af, concepts)", number=1, globals={**globals(), **locals()}))
+    concepts = read_concepts_from_csv(csv_path.expanduser())
+    vars_to_pass = {"query": query, "af": af, "concepts": concepts}
+    return timeit("query(af, concepts)", number=1, globals=vars_to_pass)
+
+
+def main(csv_path: Path):
+    print(profile(csv_path=csv_path))
 
 
 if __name__ == "__main__":
