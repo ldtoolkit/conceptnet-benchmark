@@ -1,4 +1,6 @@
 base:
   '*':
-    - user
+    - conceptnet5
     - postgres
+    - python
+    - user
