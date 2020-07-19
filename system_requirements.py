@@ -13,7 +13,7 @@ disk_before = shutil.disk_usage("/")[1]
 max_ram = ram_before
 max_disk = disk_before
 
-process = Popen(sys.argv[1:])
+process = Popen(sys.argv[1:], stdout=sys.stdout, stderr=sys.stdout)
 while process.poll() is None:
     sleep(0.01)
     max_ram = max(max_ram, psutil.virtual_memory().used)
@@ -21,6 +21,6 @@ while process.poll() is None:
 
 time_after = datetime.now()
     
-print("Time:", time_after - time_before)
-print("RAM:", humanize.naturalsize(max_ram - ram_before, binary=True))
-print("Disk:", humanize.naturalsize(max_disk - disk_before, binary=True))
+print("Time:", time_after - time_before, file=sys.stderr)
+print("RAM:", humanize.naturalsize(max_ram - ram_before, binary=True), file=sys.stderr)
+print("Disk:", humanize.naturalsize(max_disk - disk_before, binary=True), file=sys.stderr)

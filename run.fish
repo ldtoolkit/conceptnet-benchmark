@@ -8,6 +8,7 @@ apt install --assume-yes git
 
 mkdir -p /srv/salt
 cp $BASEDIR/salt/states/* /srv/salt/
+cp -r $BASEDIR/requirements /srv/salt/
 
 mkdir -p /srv/pillar
 cp $BASEDIR/salt/pillar/* /srv/pillar/
@@ -42,3 +43,10 @@ end
 
 echo "Applying SaltStack state"
 salt '*' state.apply
+
+cp $BASEDIR/system_requirements.py ~conceptnet/
+cp $BASEDIR/prepare_assertions.fish ~conceptnet/
+chown conceptnet:users ~conceptnet/*
+
+echo "Swithing to conceptnet user to prepare assertions"
+sudo -u conceptnet /home/conceptnet/prepare_assertions.fish

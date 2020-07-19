@@ -42,3 +42,17 @@ conceptnet5-package:
     - bin_env: {{ conceptnet5_virtualenv_dir }}
     - require:
       - virtualenv: {{ conceptnet5_virtualenv_dir }}
+
+conceptnet5-benchmark:
+  pip.installed:
+    - requirements: salt://requirements/conceptnet5_benchmark.txt
+    - bin_env: {{ conceptnet5_virtualenv_dir }}
+    - require:
+      - pip: conceptnet5-package
+
+conceptnet5-system-requirements:
+  pip.installed:
+    - requirements: salt://requirements/system_requirements.txt
+    - bin_env: {{ conceptnet5_virtualenv_dir }}
+    - require:
+      - pip: conceptnet5-package
