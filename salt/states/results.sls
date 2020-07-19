@@ -1,6 +1,6 @@
 /home/conceptnet/results:
   file.directory:
     - user: conceptnet
-    - group: users
+    - group: conceptnet
     - require:
       - user: conceptnet

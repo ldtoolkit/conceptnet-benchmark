@@ -1,5 +1,4 @@
 #!/usr/bin/env fish
-
 set BASEDIR (dirname (status --current-filename))
 
 echo "Installing git"
@@ -44,9 +43,17 @@ end
 echo "Applying SaltStack state"
 salt '*' state.apply
 
-cp $BASEDIR/system_requirements.py ~conceptnet/
-cp $BASEDIR/prepare_assertions.fish ~conceptnet/
-chown conceptnet:users ~conceptnet/*
+cp -a $BASEDIR/system_requirements.py ~conceptnet/
+cp -a $BASEDIR/prepare_assertions.fish ~conceptnet/
+cp -a $BASEDIR/conceptnet5_load_db.fish ~conceptnet/
+cp -a $BASEDIR/lightning_conceptnet_load_db.fish ~conceptnet/
+chown conceptnet:conceptnet -R ~conceptnet
 
-echo "Swithing to conceptnet user to prepare assertions"
-sudo -u conceptnet /home/conceptnet/prepare_assertions.fish
+# echo "Swithing to conceptnet user and preparing assertions"
+# sudo -u conceptnet /home/conceptnet/prepare_assertions.fish
+# 
+# echo "Swithing to conceptnet user and loading ConceptNet5 database"
+# sudo -u conceptnet /home/conceptnet/conceptnet5_load_db.fish
+
+echo "Swithing to conceptnet user and loading Lightning ConceptNet database"
+sudo -u conceptnet /home/conceptnet/lightning_conceptnet_load_db.fish
