@@ -13,7 +13,9 @@ mkdir -p /srv/pillar
 cp $BASEDIR/salt/pillar/* /srv/pillar/
 
 mkdir -p /srv/formulas
-git clone https://github.com/saltstack-formulas/postgres-formula /srv/formulas/postgres-formula
+if not test -d /srv/formulas/postgres-formula
+    git clone https://github.com/saltstack-formulas/postgres-formula /srv/formulas/postgres-formula
+end
 
 echo "Installing SaltStack"
 
@@ -46,14 +48,8 @@ salt '*' state.apply
 cp -a $BASEDIR/system_requirements.py ~conceptnet/
 cp -a $BASEDIR/prepare_assertions.fish ~conceptnet/
 cp -a $BASEDIR/conceptnet5_load_db.fish ~conceptnet/
-cp -a $BASEDIR/lightning_conceptnet_load_db.fish ~conceptnet/
+cp -a $BASEDIR/conceptnet_rocks_load_db.fish ~conceptnet/
 chown conceptnet:conceptnet -R ~conceptnet
 
-# echo "Swithing to conceptnet user and preparing assertions"
-# sudo -u conceptnet /home/conceptnet/prepare_assertions.fish
-# 
-# echo "Swithing to conceptnet user and loading ConceptNet5 database"
-# sudo -u conceptnet /home/conceptnet/conceptnet5_load_db.fish
-
-echo "Swithing to conceptnet user and loading Lightning ConceptNet database"
-sudo -u conceptnet /home/conceptnet/lightning_conceptnet_load_db.fish
+echo "Swithing to conceptnet user and running all rules"
+sudo -u conceptnet ~/conceptnet_rocks_virtualenv/bin/snakemake --snakefile ~/conceptnet-benchmark/Snakefile -j1

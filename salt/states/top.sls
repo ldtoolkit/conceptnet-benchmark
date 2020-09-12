@@ -1,7 +1,7 @@
 base:
   '*':
     - conceptnet5
-    - lightning_conceptnet
+    - conceptnet_rocks
     - postgres
     - python
     - results

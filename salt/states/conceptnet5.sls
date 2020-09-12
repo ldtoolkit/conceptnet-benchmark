@@ -1,17 +1,17 @@
 {% set conceptnet5_dir = "/home/conceptnet/conceptnet5" %}
-{% set conceptnet5_virtualenv_dir = "/home/conceptnet/conceptnet5-virtualenv" %}
-{% set python_version = "3.7.8" %}
+{% set conceptnet5_virtualenv_dir = "/home/conceptnet/conceptnet5_virtualenv" %}
+{% set python_version = "3.7.9" %}
 
-conceptnet5-repo:
+conceptnet5_repo:
   git.latest:
     - name: https://github.com/commonsense/conceptnet5.git
-    - rev: 096b7457f54ca3c1f34ff59192ee3cd751d6a1eb
+    - rev: 8b11062866c1791f003bf0de4542c35f0c118dfc
     - user: conceptnet
     - target: {{ conceptnet5_dir }}
     - require:
       - user: conceptnet
 
-conceptnet5-deps:
+conceptnet5_deps:
   pkg.installed:
     - pkgs:
       - build-essential
@@ -26,7 +26,7 @@ conceptnet5-deps:
     - group: users
     - require:
       - user: conceptnet
-      - git: conceptnet5-repo
+      - git: conceptnet5_repo
 
 {{ conceptnet5_virtualenv_dir }}:
   virtualenv.managed:
@@ -36,23 +36,23 @@ conceptnet5-deps:
       - pyenv: python-{{ python_version }}
       - pip: virtualenv
 
-conceptnet5-package:
+conceptnet5_package:
   pip.installed:
     - editable: {{ conceptnet5_dir }}[vectors]
     - bin_env: {{ conceptnet5_virtualenv_dir }}
     - require:
       - virtualenv: {{ conceptnet5_virtualenv_dir }}
 
-conceptnet5-benchmark:
+conceptnet5_benchmark:
   pip.installed:
     - requirements: salt://requirements/conceptnet5_benchmark.txt
     - bin_env: {{ conceptnet5_virtualenv_dir }}
     - require:
-      - pip: conceptnet5-package
+      - pip: conceptnet5_package
 
-conceptnet5-system-requirements:
+conceptnet5_system_requirements:
   pip.installed:
     - requirements: salt://requirements/system_requirements.txt
     - bin_env: {{ conceptnet5_virtualenv_dir }}
     - require:
-      - pip: conceptnet5-package
+      - pip: conceptnet5_package

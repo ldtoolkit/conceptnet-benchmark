@@ -1,6 +1,6 @@
-{% set python_version = "3.7.8" %}
+{% set python_version = "3.7.9" %}
 
-pyenv-deps:
+pyenv_deps:
   pkg.installed:
     - pkgs:
       - make
@@ -25,7 +25,7 @@ python-{{ python_version }}:
   pyenv.installed:
     - default: True
     - require:
-      - pkg: pyenv-deps
+      - pkg: pyenv_deps
 
 # A workaround for using pip state
 python3-pip:
