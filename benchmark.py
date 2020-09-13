@@ -38,7 +38,7 @@ def profile(csv_path: Path, library: Library, verbose: bool):
         assertion_finder_constructor_kwargs = {}
     elif library == Library.conceptnet_rocks:
         from conceptnet_rocks import AssertionFinder
-        assertion_finder_constructor_kwargs = {"close_stderr": True}
+        assertion_finder_constructor_kwargs = {"close_stdout_and_stderr": True}
     else:
         raise ValueError(f"Unsupported library: {library}")
 
