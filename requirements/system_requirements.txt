@@ -1,2 +1,2 @@
 humanize==2.5.0
-psutil==5.7.0
+psutil==5.7.2

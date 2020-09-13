@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
+from arango import ArangoClient
+from conceptnet_rocks import arangodb
+from conceptnet_rocks.database import DEFAULT_DATABASE
 from pathlib import Path
-from typing import Optional
-
 from tqdm import tqdm
+from typing import Optional
+import dask.dataframe as dd
 import typer
 
 
@@ -10,50 +13,55 @@ app = typer.Typer()
 
 
 @app.command()
-def concepts(database_path_hint: Path, output_dir: Path, count: Optional[int] = None):
-    from lightning_conceptnet import LightningConceptNet
-    import csv
-    import dask.dataframe as dd
-
-    database_path_hint = database_path_hint.expanduser()
+def nodes(
+        output_dir: Path,
+        connection_uri: str = arangodb.DEFAULT_CONNECTION_URI,
+        database: str = DEFAULT_DATABASE,
+        root_password: str = arangodb.DEFAULT_ROOT_PASSWORD,
+        arangodb_exe_path: Path = arangodb.DEFAULT_INSTALL_PATH,
+        data_path: Path = arangodb.DEFAULT_DATA_PATH,
+        count: Optional[int] = None,
+):
     output_dir = output_dir.expanduser()
-    lcn = LightningConceptNet(database_path_hint)
-    csv_file_path = output_dir / "concepts.csv"
-    if not csv_file_path.is_file():
-        with open(str(csv_file_path), "w", newline="") as f:
-            with lcn.read_transaction as txn:
-                concept = next(iter(lcn.concept(txn)))
-                fields_to_skip = ["oid", "external_url"]
-                field_names = [key for key in concept.to_dict().keys() if key not in fields_to_skip]
-                writer = csv.DictWriter(f, fieldnames=field_names)
-                writer.writeheader()
-                rows = []
-                print("Writing concepts from database into CSV:")
-                total = lcn._db.node_table.records()
-                chunk_size = 1_000_000
-                for i, concept in tqdm(enumerate(lcn.concept(txn)), unit=" concepts", unit_scale=True, total=total):
-                    d = concept.to_dict()
-                    for field in fields_to_skip:
-                        del d[field]
-                    rows.append(d)
-                    if len(rows) == chunk_size:
-                        writer.writerows(rows)
-                        rows = []
-                writer.writerows(rows)
+    all_nodes_file_path = output_dir / "nodes.csv"
+
+    if not all_nodes_file_path.is_file():
+        with open(str(all_nodes_file_path), "w") as f:
+            print("Writing concepts from database into CSV:")
+            f.write("uri\n")
+            with arangodb.instance(
+                    connection_uri=connection_uri,
+                    root_password=root_password,
+                    arangodb_exe_path=arangodb_exe_path,
+                    data_path=data_path,
+            ):
+                client = ArangoClient(hosts=connection_uri)
+                db = client.db(database)
+                batch_size = 2**10
+                cursor = db.aql.execute("FOR node IN nodes RETURN rtrim(node.uri, '/')", batch_size=batch_size)
+                total = db.collection("nodes").count()
+                lines = []
+                for i, node_uri in tqdm(enumerate(cursor), unit=" nodes", unit_scale=True, total=total):
+                    lines.append(f"{node_uri}\n")
+                    if len(lines) == batch_size:
+                        f.writelines(lines)
+                        lines = []
+                f.writelines(lines)
     else:
-        print(f"File exists, skipping creation: {csv_file_path}")
-    random_csv_file_path = output_dir / "random_concepts.csv"
-    if not random_csv_file_path.is_file():
+        print(f"File exists, skipping creation: {all_nodes_file_path}")
+
+    random_nodes_file_path = output_dir / "random_nodes.csv"
+    if not random_nodes_file_path.is_file():
         print("Read concepts from CSV into dask DataFrame")
-        df = dd.read_csv(csv_file_path, keep_default_na=False)
+        df = dd.read_csv(all_nodes_file_path, keep_default_na=False)
         if count is None:
             frac = 1.0
         else:
             frac = count / len(df.index)
         print("Writing random concepts from dask DataFrame into CSV")
-        df.sample(frac=frac).to_csv(str(random_csv_file_path), index=None, single_file=True)
+        df.sample(frac=frac).to_csv(str(random_nodes_file_path), index=None, single_file=True)
     else:
-        print(f"File exists, skipping creation: {random_csv_file_path}")
+        print(f"File exists, skipping creation: {random_nodes_file_path}")
 
 
 @app.command()

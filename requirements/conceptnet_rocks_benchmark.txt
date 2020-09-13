@@ -1,2 +1,4 @@
 snakemake==5.24.0
 typer==0.3.2
+dask==2.26.0
+pandas==1.1.2
