@@ -5,4 +5,5 @@ base:
     - postgres
     - python
     - results
+    - sudoers
     - user

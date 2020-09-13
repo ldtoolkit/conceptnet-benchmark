@@ -3,6 +3,7 @@ from enum import Enum
 from pathlib import Path
 from timeit import timeit
 import dask.dataframe as dd
+import subprocess
 import typer
 
 
@@ -35,14 +36,16 @@ def query(af, items: dd.DataFrame, verbose: bool = False):
 def profile(csv_path: Path, library: Library, verbose: bool):
     if library == Library.conceptnet5:
         from conceptnet5.db.query import AssertionFinder
-        assertion_finder_constructor_kwargs = {}
+        script_dir = Path(__file__).resolve().parent
+        subprocess.call(["sudo", script_dir / "postgresql_clear_cache.sh"])
+        af = AssertionFinder()
     elif library == Library.conceptnet_rocks:
         from conceptnet_rocks import AssertionFinder
-        assertion_finder_constructor_kwargs = {"close_stdout_and_stderr": True}
+        af = AssertionFinder(close_stdout_and_stderr=True)
+        af.clear_cache()
     else:
         raise ValueError(f"Unsupported library: {library}")
 
-    af = AssertionFinder(**assertion_finder_constructor_kwargs)
     items = dd.read_csv(csv_path.expanduser(), keep_default_na=False)
     vars_to_pass = {
         "query": query,
