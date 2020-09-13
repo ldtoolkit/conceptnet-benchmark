@@ -20,7 +20,6 @@ def query(af, items: dd.DataFrame, verbose: bool = False):
     edges_strs = []
 
     for item in items["uri"]:
-
         edges = af.lookup(item, limit=LIMIT)
         if verbose:
             edges_strs.extend(str(dict(sorted(edge.items()))) for edge in edges)

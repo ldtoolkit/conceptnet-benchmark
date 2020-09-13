@@ -87,7 +87,7 @@ def generate(
     random_items_file_path = output_dir / f"random_{what.value}.csv"
     if not random_items_file_path.is_file():
         print("Read items from CSV into dask DataFrame")
-        df = dd.read_csv(all_items_file_path, keep_default_na=False)
+        df = dd.read_csv(all_items_file_path, sep="\t", keep_default_na=False)
         if count is None:
             frac = 1.0
         else:
