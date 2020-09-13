@@ -11,12 +11,16 @@ class Library(Enum):
     conceptnet_rocks = "conceptnet_rocks"
 
 
+LIMIT = 10000
+
+
 def query(af, items: dd.DataFrame, verbose: bool = False):
     edge_count = 0
     edges_strs = []
 
     for item in items["uri"]:
-        edges = af.lookup(item, limit=None)
+
+        edges = af.lookup(item, limit=LIMIT)
         if verbose:
             edges_strs.extend(str(dict(sorted(edge.items()))) for edge in edges)
             edge_count += len(edges)
