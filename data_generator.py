@@ -4,7 +4,7 @@ from conceptnet_rocks import arangodb
 from conceptnet_rocks.database import DEFAULT_DATABASE
 from enum import Enum
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union, List
 import dask.dataframe as dd
 import typer
 
@@ -46,8 +46,7 @@ AQLS = {
 }
 
 
-@app.command()
-def generate(
+def generate_one(
         what: What,
         output_dir: Path,
         count: Optional[int] = None,
@@ -57,12 +56,14 @@ def generate(
         arangodb_exe_path: Path = arangodb.DEFAULT_INSTALL_PATH,
         data_path: Path = arangodb.DEFAULT_DATA_PATH,
 ):
+    print(f"Processing {what.value}")
+
     output_dir = output_dir.expanduser()
     all_items_file_path = output_dir / f"{what.value}.csv"
 
     if not all_items_file_path.is_file():
         with open(str(all_items_file_path), "w") as f:
-            print(f"Writing items from database into CSV")
+            print("Writing items from database into CSV")
             f.write("uri\n")
             with arangodb.instance(
                     connection_uri=connection_uri,
@@ -91,11 +92,35 @@ def generate(
         if count is None:
             frac = 1.0
         else:
-            frac = count / len(df.index)
+            frac = min(1.0, count / len(df.index))
         print("Writing random items from dask DataFrame into CSV")
         df.sample(frac=frac).to_csv(str(random_items_file_path), index=None, single_file=True)
     else:
         print(f"File exists, skipping creation: {random_items_file_path}")
+
+
+@app.command()
+def generate(
+        what: List[What],
+        output_dir: Path,
+        count: Optional[int] = None,
+        connection_uri: str = arangodb.DEFAULT_CONNECTION_URI,
+        database: str = DEFAULT_DATABASE,
+        root_password: str = arangodb.DEFAULT_ROOT_PASSWORD,
+        arangodb_exe_path: Path = arangodb.DEFAULT_INSTALL_PATH,
+        data_path: Path = arangodb.DEFAULT_DATA_PATH,
+):
+    for x in what:
+        generate_one(
+            what=x,
+            output_dir=output_dir,
+            count=count,
+            connection_uri=connection_uri,
+            database=database,
+            root_password=root_password,
+            arangodb_exe_path=arangodb_exe_path,
+            data_path=data_path,
+        )
 
 
 if __name__ == "__main__":
