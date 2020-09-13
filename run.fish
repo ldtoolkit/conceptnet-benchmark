@@ -42,14 +42,8 @@ while not salt '*' test.ping >/dev/null ^/dev/null
   sleep 1
 end
 
-echo "Applying SaltStack state"
+echo "Applying SaltStack state (this could take minutes to complete)"
 salt '*' state.apply
-
-cp -a $BASEDIR/system_requirements.py ~conceptnet/
-cp -a $BASEDIR/prepare_assertions.fish ~conceptnet/
-cp -a $BASEDIR/conceptnet5_load_db.fish ~conceptnet/
-cp -a $BASEDIR/conceptnet_rocks_load_db.fish ~conceptnet/
-chown conceptnet:conceptnet -R ~conceptnet
 
 echo "Swithing to conceptnet user and running all rules"
 sudo -u conceptnet ~/conceptnet_rocks_virtualenv/bin/snakemake --snakefile ~/conceptnet-benchmark/Snakefile -j1
