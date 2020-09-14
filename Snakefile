@@ -60,7 +60,7 @@ rule install_arangodb:
     directory(arangodb_install_dir),
     arangodb_exe
   shell:
-    "{conceptnet_rocks} install-arangodb"
+    "{conceptnet_rocks_python} {conceptnet_rocks_exe} install-arangodb"
 
 rule load_conceptnet_rocks_database:
   input:
@@ -69,7 +69,7 @@ rule load_conceptnet_rocks_database:
     directory(arangodb_data_dir),
     f"{results_dir}/conceptnet_rocks_load_db.txt"
   shell:
-    "{conceptnet_rocks_python} {system_requirements} {conceptnet_rocks} load {assertions_file} {edge_count} 2>{results_dir}/conceptnet_rocks_load_db.txt"
+    "{conceptnet_rocks_python} {system_requirements} {conceptnet_rocks_exe} load {assertions_file} {edge_count} 2>{results_dir}/conceptnet_rocks_load_db.txt"
 
 rule generate_random_data:
   input:
