@@ -49,4 +49,5 @@ cp -a $BASEDIR /home/conceptnet/
 chown -R conceptnet:conceptnet /home/conceptnet/
 
 echo "Swithing to conceptnet user and running all rules"
+cd /home/conceptnet/conceptnet-benchmark
 sudo -u conceptnet /home/conceptnet/conceptnet_rocks_virtualenv/bin/snakemake --snakefile /home/conceptnet/conceptnet-benchmark/Snakefile -j1
