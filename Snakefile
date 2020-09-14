@@ -48,6 +48,7 @@ rule prepare_assertions:
     assertions_msgpack_file,
     f"{results_dir}/assertions_build.txt"
   shell:
+    "cd {conceptnet5_dir}; "
     "set +u; source {conceptnet5_virtualenv}/bin/activate; set -u; "
     "{conceptnet5_python} {system_requirements} {conceptnet5_snakemake} --snakefile {conceptnet5_dir}/Snakefile --resources 'ram=30' -j1 combine_assertions data/assertions/assertions.csv 2>{results_dir}/assertions_build.txt"
 
@@ -58,6 +59,7 @@ rule load_conceptnet5_database:
     conceptnet5_postgresql_done,
     f"{results_dir}/conceptnet5_load_db.txt"
   shell:
+    "cd {conceptnet5_dir}; "
     "set +u; source {conceptnet5_virtualenv}/bin/activate; set -u; "
     "{conceptnet5_python} {system_requirements} {conceptnet5_snakemake} --snakefile {conceptnet5_dir}/Snakefile --resources 'ram=30' -j1 load_db 2>{results_dir}/conceptnet5_load_db.txt"
 
