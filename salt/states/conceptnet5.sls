@@ -19,6 +19,7 @@ conceptnet5_deps:
       - libhdf5-dev
       - libmecab-dev
       - mecab-ipadic-utf8
+      - unzip
 
 {{ conceptnet5_dir }}/data:
   file.directory:
