@@ -57,13 +57,13 @@ rule load_conceptnet5_database:
 
 rule install_arangodb:
   output:
-    directory(arangodb_install_dir),
-    arangodb_exe
+    directory(arangodb_install_dir)
   shell:
     "{conceptnet_rocks_python} {conceptnet_rocks_exe} install-arangodb"
 
 rule load_conceptnet_rocks_database:
   input:
+    assertions_file,
     arangodb_exe
   output:
     directory(arangodb_data_dir),
