@@ -45,7 +45,7 @@ end
 echo "Applying SaltStack state (this could take minutes to complete)"
 salt '*' state.apply
 
-cp -a $BASEDIR /home/conceptnet/
+cp -a $BASEDIR /home/conceptnet/conceptnet-benchmark
 chown -R conceptnet:conceptnet /home/conceptnet/
 
 echo "Swithing to conceptnet user and running all rules"
