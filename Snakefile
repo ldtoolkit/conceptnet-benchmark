@@ -28,16 +28,16 @@ rule all:
     assertions_msgpack_file,
     conceptnet5_postgresql_done,
     arangodb_data_dir,
-    "{results_dir}/conceptnet5_node_profile.txt",
-    "{results_dir}/conceptnet5_relation_profile.txt",
-    "{results_dir}/conceptnet5_source_profile.txt",
-    "{results_dir}/conceptnet5_dataset_profile.txt",
-    "{results_dir}/conceptnet5_edge_uri_profile.txt",
-    "{results_dir}/conceptnet_rocks_node_profile.txt",
-    "{results_dir}/conceptnet_rocks_relation_profile.txt",
-    "{results_dir}/conceptnet_rocks_source_profile.txt",
-    "{results_dir}/conceptnet_rocks_dataset_profile.txt",
-    "{results_dir}/conceptnet_rocks_edge_uri_profile.txt"
+    f"{results_dir}/conceptnet5_node_profile.txt",
+    f"{results_dir}/conceptnet5_relation_profile.txt",
+    f"{results_dir}/conceptnet5_source_profile.txt",
+    f"{results_dir}/conceptnet5_dataset_profile.txt",
+    f"{results_dir}/conceptnet5_edge_uri_profile.txt",
+    f"{results_dir}/conceptnet_rocks_node_profile.txt",
+    f"{results_dir}/conceptnet_rocks_relation_profile.txt",
+    f"{results_dir}/conceptnet_rocks_source_profile.txt",
+    f"{results_dir}/conceptnet_rocks_dataset_profile.txt",
+    f"{results_dir}/conceptnet_rocks_edge_uri_profile.txt"
 
 rule prepare_assertions:
   output:
