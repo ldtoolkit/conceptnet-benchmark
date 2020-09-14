@@ -28,11 +28,14 @@ rule all:
     assertions_msgpack_file,
     conceptnet5_postgresql_done,
     arangodb_data_dir,
+    f"{results_dir}/assertions_build.txt",
+    f"{results_dir}/conceptnet5_load_db.txt",
     f"{results_dir}/conceptnet5_node_profile.txt",
     f"{results_dir}/conceptnet5_relation_profile.txt",
     f"{results_dir}/conceptnet5_source_profile.txt",
     f"{results_dir}/conceptnet5_dataset_profile.txt",
     f"{results_dir}/conceptnet5_edge_uri_profile.txt",
+    f"{results_dir}/conceptnet_rocks_load_db.txt",
     f"{results_dir}/conceptnet_rocks_node_profile.txt",
     f"{results_dir}/conceptnet_rocks_relation_profile.txt",
     f"{results_dir}/conceptnet_rocks_source_profile.txt",
@@ -42,7 +45,9 @@ rule all:
 rule prepare_assertions:
   output:
     assertions_file,
-    assertions_msgpack_file
+    assertions_msgpack_file,
+    directory(results_dir),
+    f"{results_dir}/assertions_build.txt"
   shell:
     "{conceptnet5_python} {system_requirements} {conceptnet5_snakemake} --snakefile {conceptnet5_dir}/Snakefile --resources 'ram=30' -j1 combine_assertions data/assertions/assertions.csv 2>{results_dir}/assertions_build.txt"
 
