@@ -18,7 +18,7 @@ edge_count = f"--edge-count {config['edge_count']}" if config.get('edge_count') 
 generate_data_exe = f"{conceptnet_benchmark_dir}/generate_data.fish"
 results_dir = "/home/conceptnet/results"
 system_requirements = f"{conceptnet_benchmark_dir}/system_requirements.py"
-assertions_file = f"{conceptnet5_dir}/data/assertions.csv"
+assertions_file = f"{conceptnet5_dir}/data/assertions/assertions.csv"
 assertions_msgpack_file = f"{conceptnet5_dir}/data/assertions/assertions.msgpack"
 benchmark_exe = f"{conceptnet_benchmark_dir}/run_benchmark.fish"
 
@@ -46,7 +46,6 @@ rule prepare_assertions:
   output:
     assertions_file,
     assertions_msgpack_file,
-    directory(results_dir),
     f"{results_dir}/assertions_build.txt"
   shell:
     "set +u; source {conceptnet5_virtualenv}/bin/activate; set -u; "
