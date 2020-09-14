@@ -6,3 +6,12 @@ partd==1.1.0
 snakemake==5.24.0
 toolz==0.10.0
 typer==0.3.2
+# For table creation:
+DataProperty==0.50.0
+mbstrdecoder==1.0.0
+msgfy==0.1.0
+pathvalidate==2.3.0
+pytablewriter==0.58.0
+tabledata==1.1.3
+tcolorpy==0.0.8
+typepy==1.1.1

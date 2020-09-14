@@ -4,7 +4,7 @@ from conceptnet_rocks import arangodb
 from conceptnet_rocks.database import DEFAULT_DATABASE
 from enum import Enum
 from pathlib import Path
-from typing import Optional, Union, List
+from typing import Optional, List
 import dask.dataframe as dd
 import typer
 

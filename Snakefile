@@ -10,6 +10,7 @@ conceptnet5_snakemake = f"{conceptnet5_virtualenv}/bin/snakemake"
 conceptnet_benchmark_dir = "/home/conceptnet/conceptnet-benchmark"
 conceptnet_benchmark_exe = f"{conceptnet_benchmark_dir}/benchmark.py"
 conceptnet_benchmark_data_generator = f"{conceptnet_benchmark_dir}/data_generator.py"
+conceptnet_benchmark_tables_generator = f"{conceptnet_benchmark_dir}/generate_tables.py"
 conceptnet_rocks_virtualenv = "/home/conceptnet/conceptnet_rocks_virtualenv"
 conceptnet_rocks_python = f"{conceptnet_rocks_virtualenv}/bin/python"
 conceptnet_rocks_exe = f"{conceptnet_rocks_virtualenv}/bin/conceptnet-rocks"
@@ -49,7 +50,8 @@ rule load_conceptnet5_database:
   input:
     assertions_msgpack_file
   output:
-    conceptnet5_postgresql_done
+    conceptnet5_postgresql_done,
+    f"{results_dir}/conceptnet5_load_db.txt"
   shell:
     "{conceptnet5_python} {system_requirements} {conceptnet5_snakemake} --snakefile {conceptnet5_dir}/Snakefile --resources 'ram=30' -j1 load_db 2>{results_dir}/conceptnet5_load_db.txt"
 
@@ -64,7 +66,8 @@ rule load_conceptnet_rocks_database:
   input:
     arangodb_exe
   output:
-    directory(arangodb_data_dir)
+    directory(arangodb_data_dir),
+    f"{results_dir}/conceptnet_rocks_load_db.txt"
   shell:
     "{conceptnet_rocks_python} {system_requirements} {conceptnet_rocks} load {assertions_file} {edge_count} 2>{results_dir}/conceptnet_rocks_load_db.txt"
 
@@ -112,3 +115,27 @@ rule benchmark_conceptnet_rocks:
     f"{results_dir}/conceptnet_rocks_edge_uri_profile.txt"
   shell:
     "{benchmark_exe} conceptnet_rocks"
+
+rule generate_tables:
+  input:
+    f"{results_dir}/conceptnet5_load_db.txt",
+    f"{results_dir}/conceptnet_rocks_load_db.txt",
+    f"{results_dir}/conceptnet5_node_profile.txt",
+    f"{results_dir}/conceptnet5_relation_profile.txt",
+    f"{results_dir}/conceptnet5_source_profile.txt",
+    f"{results_dir}/conceptnet5_dataset_profile.txt",
+    f"{results_dir}/conceptnet5_edge_uri_profile.txt",
+    f"{results_dir}/conceptnet_rocks_node_profile.txt",
+    f"{results_dir}/conceptnet_rocks_relation_profile.txt",
+    f"{results_dir}/conceptnet_rocks_source_profile.txt",
+    f"{results_dir}/conceptnet_rocks_dataset_profile.txt",
+    f"{results_dir}/conceptnet_rocks_edge_uri_profile.txt"
+  output:
+    f"{results_dir}/Load database time.md",
+    f"{results_dir}/Load database RAM.md",
+    f"{results_dir}/Load database disk.md",
+    f"{results_dir}/Query time.md",
+    f"{results_dir}/Query RAM.md",
+    f"{results_dir}/Query disk.md"
+  shell:
+    "{conceptnet_rocks_python} {conceptnet_benchmark_tables_generator}"
