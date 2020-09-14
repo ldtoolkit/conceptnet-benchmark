@@ -46,6 +46,7 @@ echo "Applying SaltStack state (this could take minutes to complete)"
 salt '*' state.apply
 
 cp -a $BASEDIR /home/conceptnet/
+chown -R conceptnet:conceptnet /home/conceptnet/
 
 echo "Swithing to conceptnet user and running all rules"
 sudo -u conceptnet /home/conceptnet/conceptnet_rocks_virtualenv/bin/snakemake --snakefile /home/conceptnet/conceptnet-benchmark/Snakefile -j1
