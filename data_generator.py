@@ -94,7 +94,7 @@ def generate_one(
         else:
             frac = min(1.0, count / len(df.index))
         print("Writing random items from dask DataFrame into CSV")
-        df.sample(frac=frac).to_csv(str(random_items_file_path), index=None, single_file=True)
+        df.sample(frac=frac, random_state=42).to_csv(str(random_items_file_path), index=None, single_file=True)
     else:
         print(f"File exists, skipping creation: {random_items_file_path}")
 
