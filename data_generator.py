@@ -104,6 +104,11 @@ def generate(
         what: List[What],
         output_dir: Path,
         count: Optional[int] = None,
+        node_count: Optional[int] = None,
+        relation_count: Optional[int] = None,
+        source_count: Optional[int] = None,
+        dataset_count: Optional[int] = None,
+        edge_uri_count: Optional[int] = None,
         connection_uri: str = arangodb.DEFAULT_CONNECTION_URI,
         database: str = DEFAULT_DATABASE,
         root_password: str = arangodb.DEFAULT_ROOT_PASSWORD,
@@ -111,10 +116,17 @@ def generate(
         data_path: Path = arangodb.DEFAULT_DATA_PATH,
 ):
     for x in what:
+        x_count = {
+            What.node: node_count,
+            What.relation: relation_count,
+            What.source: source_count,
+            What.dataset: dataset_count,
+            What.edge_uri: edge_uri_count,
+        }[x] or count
         generate_one(
             what=x,
             output_dir=output_dir,
-            count=count,
+            count=x_count,
             connection_uri=connection_uri,
             database=database,
             root_password=root_password,
