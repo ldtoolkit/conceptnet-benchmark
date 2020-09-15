@@ -40,7 +40,13 @@ rule all:
     f"{results_dir}/conceptnet_rocks_relation_profile.txt",
     f"{results_dir}/conceptnet_rocks_source_profile.txt",
     f"{results_dir}/conceptnet_rocks_dataset_profile.txt",
-    f"{results_dir}/conceptnet_rocks_edge_uri_profile.txt"
+    f"{results_dir}/conceptnet_rocks_edge_uri_profile.txt",
+    f"{results_dir}/Load database time.md",
+    f"{results_dir}/Load database RAM.md",
+    f"{results_dir}/Load database disk.md",
+    f"{results_dir}/Query time.md",
+    f"{results_dir}/Query RAM.md",
+    f"{results_dir}/Query disk.md"
 
 rule prepare_assertions:
   output:
