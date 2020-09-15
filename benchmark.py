@@ -28,8 +28,9 @@ def query(af, items: dd.DataFrame, verbose: bool = False):
                     (dict(sorted(source.items())) for source in result["sources"]),
                     key=lambda x: str(x),
                 )
+                return result
 
-            edges_strs.extend(sorted_edge(edge) for edge in edges)
+            edges_strs.extend(str(sorted_edge(edge)) for edge in edges)
             edge_count += len(edges)
 
     if verbose:
