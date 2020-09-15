@@ -22,7 +22,14 @@ def query(af, items: dd.DataFrame, verbose: bool = False):
     for item in items["uri"]:
         edges = af.lookup(item, limit=LIMIT)
         if verbose:
-            edges_strs.extend(str(dict(sorted(edge.items()))) for edge in edges)
+            def sorted_edge(edge):
+                result = dict(sorted(edge.items()))
+                result["sources"] = sorted(
+                    (dict(sorted(source.items())) for source in result["sources"]),
+                    key=lambda x: str(x),
+                )
+
+            edges_strs.extend(sorted_edge(edge) for edge in edges)
             edge_count += len(edges)
 
     if verbose:
