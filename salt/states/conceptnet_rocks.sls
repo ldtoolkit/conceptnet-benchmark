@@ -14,7 +14,7 @@
 conceptnet_rocks_repo:
   git.latest:
     - name: https://github.com/ldtoolkit/conceptnet-rocks.git
-    - rev: bd94cc6817cdd03a4eeb80418aab372a9f6ad5ab
+    - rev: 7445fe799ccb1e95c0cabd410acfac957a85dec5
     - user: conceptnet
     - target: {{ conceptnet_rocks_dir }}
     - require:
