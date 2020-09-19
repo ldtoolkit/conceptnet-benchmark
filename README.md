@@ -15,3 +15,5 @@ unzip master.zip
 cd conceptnet-benchmark-master/
 sudo bash run.sh
 ```
+
+After a few hours you will get the results in `~conceptnet/results` folder.
